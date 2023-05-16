@@ -1,6 +1,6 @@
 package main
 
-import "golang_std/std_pkg/bufio"
+import "golang_std/std_pkg/builtin"
 
 func main() {
 	// tar.Tar()
@@ -9,5 +9,6 @@ func main() {
 	// bufio.BufioWriting2()
 	// bufio.BufioReading()
 	// bufio.BufioScanner()
-	bufio.BufioWriteRune()
+	// bufio.BufioWriteRune()
+	builtin.Example()
 }
