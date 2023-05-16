@@ -3,6 +3,8 @@ package bufio
 import (
 	"bufio"
 	"fmt"
+	"log"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -62,10 +64,34 @@ func BufioWriting() {
 	bw.Write([]byte("12345"))
 }
 
-const singleLine string = "I'd love to have some coffee right about now"
-const multiLine string = "Reading is my...\r\n favourite"
+func BufioWriteString() {
+	data := []string{"an old falcon", "misty mountains",
+		"a wise man", "a rainy morning"}
+
+	f, err := os.Create("words.txt")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	wr := bufio.NewWriter(f)
+
+	for _, line := range data {
+
+		wr.WriteString(line + "\n")
+	}
+
+	wr.Flush()
+
+	fmt.Println("data written")
+}
 
 func BufioReading() {
+	const singleLine string = "I'd love to have some coffee right about now"
+	const multiLine string = "Reading is my...\r\n favourite"
+
 	fmt.Println("Lenght of singleLine input is " + strconv.Itoa(len(singleLine)))
 	str := strings.NewReader(singleLine)
 	br := bufio.NewReaderSize(str, 25)
@@ -137,6 +163,79 @@ func BufioReading() {
 	scanner := bufio.NewScanner(str)
 	for scanner.Scan() {
 		fmt.Printf("Token (Scanner): %q\n", scanner.Text())
+	}
+
+}
+
+func BufioScanner() {
+	f, err := os.Open("words.txt")
+	if err != nil {
+		panic(err)
+	}
+
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func BufioWriteRune() {
+
+	runes := "🐜🐬🐄🐘🦂🐫🐑🦍🐯🐞"
+
+	f, err := os.Create("runes.txt")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	wr := bufio.NewWriter(f)
+
+	for _, _rune := range runes {
+
+		wr.WriteRune(_rune)
+		wr.WriteRune('\n')
+	}
+
+	wr.Flush()
+
+	fmt.Println("runes written")
+}
+
+func BufioReadFromString() {
+	words := []string{}
+
+	data := "A foggy mountain.\nAn old falcon.\nA wise man."
+
+	sc := bufio.NewScanner(strings.NewReader(data))
+
+	sc.Split(bufio.ScanWords) // We tell the scanner to scan by words using Split.
+
+	n := 0
+
+	for sc.Scan() {
+		words = append(words, sc.Text())
+		n++
+	}
+
+	if err := sc.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("# of words: %d\n", n)
+
+	for _, word := range words {
+
+		fmt.Println(word)
 	}
 
 }
